@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>登录页</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,minimum-scale=1,user-scalable=no">
+    <style>
+        .form {
+            width: 300px;
+            margin: 120px auto 0;
+            padding: 10px;
+        }
+        .form-cell {
+            margin-bottom: 20px;
+        }
+        .form-cell label {
+            font-weight: 500;
+        }
+        .form-cell input {
+            outline: none;
+            border: none;
+            border-bottom: 1px solid #999;
+            max-width: 100%;
+            padding: 10px 10px 0;
+            font-size: 18px;
+        }
+        .form-cell button {
+            outline: none;
+            width: 100%;
+            line-height: 36px;
+            border: 1px solid #2196f3;
+            background: #2196f3;
+            border-radius: 5px;
+            color: #fff;
+        }
+    </style>
+</head>
+<body>
+
+<div class="form">
+    <div class="form-cell">
+        <label>账号：</label>
+        <input id="username" type="text" />
+    </div>
+    <div class="form-cell">
+        <label>密码：</label>
+        <input id="password" type="password" />
+    </div>
+    <div class="form-cell">
+        <button id="btn_login">登录</button>
+    </div>
+</div>
+
+<script th:src="@{/js/jquery-2.1.3.min.js}"></script>
+<script>
+
+    $(function() {
+        $('#btn_login').click(function(res) {
+            let username = $('#username').val(),
+                password = $('#password').val()
+
+            $.ajax({
+                url: '/login',
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json;charset=UTF-8'
+                },
+                data: {
+                    username: username,
+                    password: password
+                },
+                success: function(res) {
+                    console.log(res)
+                }
+            })
+        })
+    })
+
+</script>
+</body>
+</html>
