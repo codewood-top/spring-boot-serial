@@ -4,9 +4,54 @@
     <meta charset="UTF-8">
     <title>hello-spring-boot-web-security</title>
     <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,minimum-scale=1,user-scalable=no">
+    <style>
+        img.avatar {
+            height: 60px;
+            width: 60px;
+            border-radius: 50%;
+            vertical-align: middle;
+        }
+    </style>
 </head>
 <body>
     <h1>个人中心</h1>
     <h2>此页面需要登陆后才能访问</h2>
+    <div>
+        <h3>session.loginInfo</h3>
+        <div>
+            <label>username：</label>
+            <span th:text="${session.loginInfo.username}"></span>
+        </div>
+        <div>
+            <label>nickname：</label>
+            <span th:text="${session.loginInfo.nickname}"></span>
+        </div>
+        <div>
+            <label>avatar：</label>
+            <img class="avatar" th:src="${session.loginInfo.avatar}" />
+        </div>
+
+    </div>
+    <div>
+        <h3>thymeleaf-extras-springsecurity5</h3>
+        <div>
+            <div>
+                <label>username：</label>
+                <span><th:block sec:authentication="principal.username"></th:block></span>
+            </div>
+            <div>
+                <label>roles：</label>
+                <span><th:block sec:authentication="principal.authorities"></th:block></span>
+            </div>
+            <div>
+                <label>是否有ADMINISTRATOR权限：</label>
+                <span><th:block th:text="${#authorization.expression('hasRole(''ROLE_ADMINISTRATOR'')')}"></th:block></span>
+            </div>
+            <div>
+                <label>是否有USER,ADMINISTRATOR中的任一权限：</label>
+                <span><th:block th:text="${#authorization.expression('hasAnyRole(''ROLE_USER'', ''ROLE_ADMINISTRATOR'')')}"></th:block></span>
+            </div>
+        </div>
+    </div>
 </body>
 </html>
