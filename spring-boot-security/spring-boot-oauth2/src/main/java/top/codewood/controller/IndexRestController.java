@@ -17,4 +17,9 @@ public class IndexRestController {
         return "Hello, info";
     }
 
+    @RequestMapping("/logininfo")
+    public Object loginInfo() {
+        return "Hello, login info";
+    }
+
 }

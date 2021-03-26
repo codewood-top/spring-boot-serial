@@ -1,10 +1,6 @@
 package top.codewood.config.security;
 
-import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializerProvider;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.fasterxml.jackson.databind.ser.std.StdSerializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
@@ -21,10 +17,13 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.common.exceptions.InvalidTokenException;
 import org.springframework.security.oauth2.common.exceptions.OAuth2Exception;
+import org.springframework.security.oauth2.config.annotation.builders.ClientDetailsServiceBuilder;
+import org.springframework.security.oauth2.config.annotation.builders.InMemoryClientDetailsServiceBuilder;
 import org.springframework.security.oauth2.config.annotation.configurers.ClientDetailsServiceConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.AuthorizationServerConfigurerAdapter;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableAuthorizationServer;
@@ -33,6 +32,8 @@ import org.springframework.security.oauth2.config.annotation.web.configuration.R
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerEndpointsConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerSecurityConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configurers.ResourceServerSecurityConfigurer;
+import org.springframework.security.oauth2.provider.ClientDetailsService;
+import org.springframework.security.oauth2.provider.error.OAuth2AuthenticationEntryPoint;
 import org.springframework.security.oauth2.provider.error.WebResponseExceptionTranslator;
 import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenConverter;
@@ -40,7 +41,11 @@ import org.springframework.security.oauth2.provider.token.store.JwtTokenStore;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.access.AccessDeniedHandler;
+import top.codewood.config.security.exception.AppOAuth2Exception;
+import top.codewood.config.security.filter.ClientDetailsAuthenticationFilter;
+import top.codewood.http.vo.ResultEntity;
 
+import javax.annotation.PostConstruct;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -62,20 +67,25 @@ public class SecurityConfig {
 
     @Bean
     public PasswordEncoder passwordEncoder() {
-        return PasswordEncoderFactories.createDelegatingPasswordEncoder();
+        return new BCryptPasswordEncoder();
     }
 
     @EnableAuthorizationServer
     public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdapter {
+
+        ClientDetailsService clientDetailsService = null;
+
         @Override
         public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
-            clients.inMemory()
-                    .withClient("first-client")
+            ClientDetailsServiceBuilder clientDetailsServiceBuilder = new InMemoryClientDetailsServiceBuilder();
+            clientDetailsServiceBuilder.withClient("first-client")
                     .secret(passwordEncoder().encode("first-secret"))
                     .scopes("all")
                     .authorizedGrantTypes("authorization_code", "password", "refresh_token")
                     .accessTokenValiditySeconds(120)
                     .refreshTokenValiditySeconds(600);
+            clientDetailsService = clientDetailsServiceBuilder.build();
+            clients.withClientDetails(clientDetailsService);
         }
 
         @Override
@@ -84,6 +94,7 @@ public class SecurityConfig {
                     .userDetailsService(userDetailsService());
             endpoints.accessTokenConverter(jwtAccessTokenConverter())
                     .reuseRefreshTokens(false);
+
 
             endpoints.exceptionTranslator(new WebResponseExceptionTranslator<OAuth2Exception>() {
                 @Override
@@ -98,31 +109,31 @@ public class SecurityConfig {
         @Override
         public void configure(AuthorizationServerSecurityConfigurer security) throws Exception {
 
+            security.authenticationEntryPoint(new AuthenticationEntryPoint() {
+                @Override
+                public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
+                    LOGGER.error("AuthorizationServerConfig entry err: {}", authException.getMessage());
+                    response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
+                    response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                    response.getWriter().write(objectMapper.writeValueAsString(ResultEntity.failure(HttpServletResponse.SC_UNAUTHORIZED, "未授权应用！")));
+                    response.flushBuffer();
+                }
+            });
+            security.accessDeniedHandler(new AccessDeniedHandler() {
+                @Override
+                public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException accessDeniedException) throws IOException, ServletException {
+                    LOGGER.error("AuthorizationServerConfig access denied, err: {}", accessDeniedException.getMessage());
+                }
+            });
+            security.addTokenEndpointAuthenticationFilter(new ClientDetailsAuthenticationFilter(clientDetailsService, passwordEncoder()));
+
         }
 
-    }
-
-    @JsonSerialize(using = AppOAuth2ExceptionSerializer.class)
-    public class AppOAuth2Exception extends OAuth2Exception {
-
-        public AppOAuth2Exception(String msg) {
-            super(msg);
-        }
-    }
-
-    public class AppOAuth2ExceptionSerializer extends StdSerializer<AppOAuth2Exception> {
-
-        protected AppOAuth2ExceptionSerializer() {
-            super(AppOAuth2Exception.class);
+        @PostConstruct
+        public void postConstruct() {
+            LOGGER.info("AuthorizationServerConfig postConstruct");
         }
 
-        @Override
-        public void serialize(AppOAuth2Exception value, JsonGenerator gen, SerializerProvider provider) throws IOException {
-            gen.writeStartObject();
-            gen.writeNumberField("code", value.getHttpErrorCode());
-            gen.writeStringField("message", value.getMessage());
-            gen.writeEndObject();
-        }
     }
 
     @Bean
@@ -138,14 +149,14 @@ public class SecurityConfig {
     }
 
     @EnableResourceServer
-    public class WebSecurityConfig extends ResourceServerConfigurerAdapter {
+    public class ResourceSecurityConfig extends ResourceServerConfigurerAdapter {
 
         @Override
         public void configure(HttpSecurity http) throws Exception {
             http.csrf().disable();
             http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.NEVER);
             http.authorizeRequests()
-                    .antMatchers("/rest/hello")
+                    .antMatchers("/rest/hello", "/rest/logininfo")
                     .permitAll()
                     .anyRequest()
                     .authenticated();
@@ -201,9 +212,9 @@ public class SecurityConfig {
 
     @Bean
     public UserDetailsService userDetailsService() {
-        return new InMemoryUserDetailsManager(User.withDefaultPasswordEncoder()
-                .username("test")
-                .password("testpass")
+        return new InMemoryUserDetailsManager(User
+                .withUsername("test")
+                .password(passwordEncoder().encode("testpass"))
                 .roles("USER")
                 .build()
         );
