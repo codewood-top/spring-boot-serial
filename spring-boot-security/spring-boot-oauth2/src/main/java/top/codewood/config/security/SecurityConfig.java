@@ -33,6 +33,7 @@ import org.springframework.security.oauth2.config.annotation.web.configurers.Aut
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerSecurityConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configurers.ResourceServerSecurityConfigurer;
 import org.springframework.security.oauth2.provider.ClientDetailsService;
+import org.springframework.security.oauth2.provider.TokenGranter;
 import org.springframework.security.oauth2.provider.error.OAuth2AuthenticationEntryPoint;
 import org.springframework.security.oauth2.provider.error.WebResponseExceptionTranslator;
 import org.springframework.security.oauth2.provider.token.TokenStore;
@@ -95,7 +96,6 @@ public class SecurityConfig {
             endpoints.accessTokenConverter(jwtAccessTokenConverter())
                     .reuseRefreshTokens(false);
 
-
             endpoints.exceptionTranslator(new WebResponseExceptionTranslator<OAuth2Exception>() {
                 @Override
                 public ResponseEntity<OAuth2Exception> translate(Exception e) throws Exception {
@@ -103,6 +103,7 @@ public class SecurityConfig {
                     return ResponseEntity.status(HttpServletResponse.SC_UNAUTHORIZED).body(new AppOAuth2Exception(e.getMessage()));
                 }
             });
+
 
         }
 
