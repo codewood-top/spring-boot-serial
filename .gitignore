@@ -5,6 +5,7 @@
 /**/.project
 /**/.classpath
 /**/target/
+/**/test/
 /**/.apt_generated/
 /**/.factorypath
 /**/application-local*.yml

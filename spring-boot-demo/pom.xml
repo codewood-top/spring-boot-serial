@@ -13,6 +13,7 @@
     <packaging>pom</packaging>
     <modules>
         <module>spring-boot-web</module>
+        <module>spring-boot-jpa</module>
     </modules>
 
     <properties>
