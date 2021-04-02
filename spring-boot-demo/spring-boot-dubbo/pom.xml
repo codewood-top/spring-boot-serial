@@ -3,24 +3,24 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
-        <artifactId>spring-boot-serial</artifactId>
+        <artifactId>spring-boot-demo</artifactId>
         <groupId>top.codewood</groupId>
         <version>1.0.0</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>spring-boot-demo</artifactId>
+    <artifactId>spring-boot-dubbo</artifactId>
     <packaging>pom</packaging>
     <modules>
-        <module>spring-boot-web</module>
-        <module>spring-boot-jpa</module>
-        <module>spring-boot-rabbitmq</module>
-        <module>spring-boot-dubbo</module>
+        <module>spring-boot-dubbo-api</module>
+        <module>spring-boot-dubbo-provider</module>
+        <module>spring-boot-dubbo-consumer</module>
     </modules>
 
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>
+        <dubbo.version>2.7.9</dubbo.version>
     </properties>
 
 </project>
