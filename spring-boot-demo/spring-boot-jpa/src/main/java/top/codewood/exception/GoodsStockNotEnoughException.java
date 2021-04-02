@@ -1,6 +1,6 @@
 package top.codewood.exception;
 
-public class GoodsStockNotEnoughException extends Exception {
+public class GoodsStockNotEnoughException extends RuntimeException {
 
     public GoodsStockNotEnoughException() {
     }

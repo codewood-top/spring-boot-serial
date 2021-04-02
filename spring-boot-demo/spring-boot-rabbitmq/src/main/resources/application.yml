@@ -1,0 +1,19 @@
+spring:
+  rabbitmq:
+    host:
+    virtual-host: /
+    username:
+    password:
+    publisher-confirms: true
+    publisher-returns: true
+    template:
+      mandatory: true
+    listener:
+      simple:
+        acknowledge-mode: auto
+        concurrency: 1
+        max-concurrency: 5
+
+logging:
+  level:
+    top.codewood: debug

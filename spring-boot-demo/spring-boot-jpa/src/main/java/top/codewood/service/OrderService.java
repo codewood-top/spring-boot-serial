@@ -1,12 +1,16 @@
 package top.codewood.service;
 
 import top.codewood.entity.Order;
-import top.codewood.exception.GoodsStockNotEnoughException;
 import top.codewood.service.bean.order.OrderParam;
 
 public interface OrderService {
 
-    Order create(OrderParam orderParam) throws GoodsStockNotEnoughException;
+    /**
+     * 如库存不足，应跑 {@link top.codewood.exception.GoodsStockNotEnoughException}
+     * @param orderParam
+     * @return
+     */
+    Order create(OrderParam orderParam);
 
     Order get(String orderNumber);
 

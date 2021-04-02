@@ -7,7 +7,6 @@ import top.codewood.entity.Goods;
 import top.codewood.entity.Order;
 import top.codewood.entity.OrderItem;
 import top.codewood.exception.GoodsNotExsitsException;
-import top.codewood.exception.GoodsStockNotEnoughException;
 import top.codewood.service.GoodsService;
 import top.codewood.service.OrderService;
 import top.codewood.service.bean.order.OrderParam;
@@ -31,7 +30,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Transactional
     @Override
-    public Order create(OrderParam orderParam) throws GoodsStockNotEnoughException {
+    public Order create(OrderParam orderParam) {
 
         Order order = new Order();
         order.setOrderNumber(orderParam.getOrderNumber());
