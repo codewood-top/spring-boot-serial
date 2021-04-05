@@ -3,26 +3,28 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
-        <artifactId>spring-boot-serial</artifactId>
+        <artifactId>spring-boot-demo</artifactId>
         <groupId>top.codewood</groupId>
         <version>1.0.0</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>spring-boot-demo</artifactId>
-    <packaging>pom</packaging>
-    <modules>
-        <module>spring-boot-web</module>
-        <module>spring-boot-jpa</module>
-        <module>spring-boot-rabbitmq</module>
-        <module>spring-boot-dubbo</module>
-        <module>spring-boot-jedis</module>
-        <module>spring-boot-exception</module>
-    </modules>
+    <artifactId>spring-boot-exception</artifactId>
 
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>
     </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-thymeleaf</artifactId>
+        </dependency>
+    </dependencies>
 
 </project>
