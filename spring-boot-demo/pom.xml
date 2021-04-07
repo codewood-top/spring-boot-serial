@@ -21,6 +21,7 @@
         <module>spring-boot-email</module>
         <module>spring-boot-mail</module>
         <module>spring-boot-wxjava</module>
+        <module>spring-boot-schedule</module>
     </modules>
 
     <properties>
