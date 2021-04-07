@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>微信支付查询页</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,minimum-scale=1,user-scalable=no">
+    <link rel="icon" href="http://img1.codewood.top/developer/images/code-logo-large.png">
+    <style>
+        .form-cell + .form-cell {
+            margin-top: 10px;
+        }
+        input {
+            width: 80%;
+        }
+    </style>
+</head>
+<body>
+
+<div>
+    <div class="form-cell">
+        <label>appid</label>
+        <div>
+            <select>
+                <option th:each="app:${apps}" th:value="${app.appid}" th:text="${app.type + '-' + app.appid}"></option>
+            </select>
+
+        </div>
+    </div>
+    <div class="form-cell">
+        <label>商户交易号</label>
+        <div>
+            <input type="text" id="outTradeNo" name="outTradeNo">
+        </div>
+    </div>
+    <div class="form-cell">
+        <button id="btn_submit">提交支付</button>
+    </div>
+</div>
+
+<script src="http://libs.baidu.com/jquery/2.0.0/jquery.min.js"></script>
+<script src="http://res.wx.qq.com/open/js/jweixin-1.6.0.js"></script>
+<script th:inline="javascript">
+
+    $(function() {
+
+        document.querySelector('#btn_submit').addEventListener('click', function() {
+
+            let appid = document.querySelector('select').value,
+                outTradeNo = document.querySelector('input[name=outTradeNo]').value
+
+
+            $.ajax({
+                url: '/wx/pay/rest/query',
+                method: 'post',
+                data: {
+                    appid: appid,
+                    tradeNo: outTradeNo
+                },
+                success: res => {
+                    console.log(res)
+                }
+            })
+        })
+
+
+    })
+
+</script>
+</body>
+</html>

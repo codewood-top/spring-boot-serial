@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>微信支付查询页</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,minimum-scale=1,user-scalable=no">
+    <link rel="icon" href="http://img1.codewood.top/developer/images/code-logo-large.png">
+    <style>
+        .form-cell + .form-cell {
+            margin-top: 10px;
+        }
+        input {
+            width: 80%;
+        }
+        .btn {
+            width: 100%;
+            font-size: 14px;
+            line-height: 30px;
+            background: #2196f3;
+            border: 1px solid #2196f3;
+            color: #fff;
+            border-radius: 3px;
+        }
+        .btn+.btn {
+            margin-top: 10px;
+        }
+        .refund-cell {
+            display: none;
+        }
+        #form.refund .refund-cell {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+
+<div id="form">
+    <div class="form-cell">
+        <label>appid</label>
+        <div>
+            <select>
+                <option th:each="app:${apps}" th:value="${app.appid}" th:text="${app.type + '-' + app.appid}"></option>
+            </select>
+
+        </div>
+    </div>
+    <div class="form-cell">
+        <label>商户交易号</label>
+        <div>
+            <input type="text" id="outTradeNo" name="outTradeNo">
+        </div>
+    </div>
+    <div class="form-cell">
+        <div>
+            <input type="checkbox" style="width:auto;"  name="refund" value="refund">退款
+        </div>
+    </div>
+    <div class="form-cell refund-cell">
+        <label>退款理由</label>
+        <div>
+            <input type="text" id="reason" name="reason" value="开发测试">
+        </div>
+    </div>
+    <div class="form-cell refund-cell">
+        <label>订单金额(元)</label>
+        <div>
+            <input type="text" id="total" name="total">
+        </div>
+    </div>
+    <div class="form-cell refund-cell">
+        <label>退款金额(元)</label>
+        <div>
+            <input type="text" id="refundamount" name="refundamount">
+        </div>
+    </div>
+    <div class="form-cell">
+        <button class="btn pay" data-url="/wx/pay/rest/query">支付查询</button>
+        <button class="btn pay" data-url="/wx/pay/rest/close">关闭支付</button>
+        <button class="btn refund" data-url="/wx/pay/rest/refund">提交退款</button>
+        <button class="btn refund" data-url="/wx/pay/rest/refundquery">退款查询</button>
+        <button class="btn profitsharing" data-url="/wx/pay/rest/profitsharing">提交分账</button>
+    </div>
+</div>
+
+<script src="http://libs.baidu.com/jquery/2.0.0/jquery.min.js"></script>
+<script src="http://res.wx.qq.com/open/js/jweixin-1.6.0.js"></script>
+<script th:inline="javascript">
+
+    let isRefund = false
+
+    function btnClicked(e) {
+        let appid = document.querySelector('select').value,
+            outTradeNo = document.querySelector('input[name=outTradeNo]').value,
+            reason = document.querySelector('input[name=reason]').value,
+            total = document.querySelector('input[name=total]').value,
+            refund = document.querySelector('input[name=refundamount]').value
+
+        let data = {
+                appid: appid,
+                tradeNo: outTradeNo
+            }
+        if (isRefund) {
+            data.reason = reason
+            data.total = total
+            data.refund = refund
+        }
+
+        $.ajax({
+            url: e.currentTarget.dataset.url,
+            method: 'post',
+            data: data,
+            success: res => {
+                if (res.code || res.message) {
+                    alert(res.message)
+                }
+            }
+        })
+    }
+
+    $(function() {
+        let btns = document.querySelectorAll('.btn')
+        btns.forEach(btn => btn.addEventListener('click', btnClicked))
+
+        let refundCheckBox = document.querySelector('input[name=refund]'),
+            form = document.querySelector('#form')
+
+        refundCheckBox.addEventListener('change', e => {
+            isRefund = e.currentTarget.checked
+            if (isRefund) {
+                form.classList.add('refund')
+            } else {
+                form.classList.remove('refund')
+            }
+        })
+
+    })
+
+</script>
+</body>
+</html>

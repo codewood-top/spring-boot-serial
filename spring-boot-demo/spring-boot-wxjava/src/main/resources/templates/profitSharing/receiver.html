@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>微信支付分账页</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,minimum-scale=1,user-scalable=no">
+    <link rel="icon" href="http://img1.codewood.top/developer/images/code-logo-large.png">
+    <style>
+        .form-cell + .form-cell {
+            margin-top: 10px;
+        }
+        input {
+            width: 80%;
+        }
+        .btn {
+            width: 100%;
+            font-size: 14px;
+            line-height: 30px;
+            background: #2196f3;
+            border: 1px solid #2196f3;
+            color: #fff;
+            border-radius: 3px;
+        }
+        .btn+.btn {
+            margin-top: 10px;
+        }
+        .add-cell {
+            display: none;
+        }
+        #form.add .add-cell {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+
+<div id="form" class="add">
+    <h2>添加分账方</h2>
+    <div class="form-cell">
+        <label>appid</label>
+        <div>
+            <select name="appid">
+                <option th:each="app:${apps}" th:value="${app.appid}" th:text="${app.type + '-' + app.appid}"></option>
+            </select>
+
+        </div>
+    </div>
+    <div class="form-cell">
+        <label>分账接收方类型</label>
+        <div>
+            <select name="type">
+                <option th:each="type:${receiverTypes}" th:value="${type}" th:text="${type}"></option>
+            </select>
+
+        </div>
+    </div>
+    <div class="form-cell add-cell">
+        <label>与分账方的关系类型</label>
+        <div>
+            <select name="relationType">
+                <option th:each="type:${receiverRelationTypes}" th:value="${type}" th:text="${type}"></option>
+            </select>
+
+        </div>
+    </div>
+    <div class="form-cell">
+        <label>account</label>
+        <div>
+            <input type="text" id="account" name="account">
+        </div>
+    </div>
+    <div class="form-cell add-cell">
+        <label>name(optional)</label>
+        <div>
+            <input type="text" id="name" name="name">
+        </div>
+    </div>
+    <div class="form-cell add-cell">
+        <label>customRelation</label>
+        <div>
+            <input type="text" id="customRelation" name="customRelation">
+        </div>
+    </div>
+    <div class="form-cell">
+        <div>
+            <input type="radio" style="width:auto;"  name="operation" value="add" checked>添加接收方
+            <input type="radio" style="width:auto;"  name="operation" value="remove">删除接收方
+        </div>
+    </div>
+    <div class="form-cell">
+        <button class="btn">添加分账接收方</button>
+    </div>
+</div>
+
+<script src="http://libs.baidu.com/jquery/2.0.0/jquery.min.js"></script>
+<script src="http://res.wx.qq.com/open/js/jweixin-1.6.0.js"></script>
+<script th:inline="javascript">
+
+    let _opt = 'add'
+
+    function btnClicked(e) {
+        let appid = document.querySelector('select[name=appid]').value,
+            type = document.querySelector('select[name=type]').value,
+            relationType = document.querySelector('select[name=relationType]').value,
+            account = document.querySelector('input[name=account]').value,
+            name = document.querySelector('input[name=name]').value,
+            customRelation = document.querySelector('input[name=customRelation]').value
+
+        let data = {
+            appid: appid,
+            type: type,
+            account: account
+        }
+        if (_opt == 'add') {
+            data.relationType = relationType
+            data.name = name
+            data.customRelation = customRelation
+        }
+
+        let url = `/wx/profitsharing/rest/${_opt}receiver`
+
+        $.ajax({
+            url: url,
+            method: 'post',
+            data: data,
+            success: res => {
+                if (res.code || res.message) {
+                    alert(res.message)
+                }
+            }
+        })
+    }
+
+    $(function() {
+        let btns = document.querySelectorAll('.btn')
+        btns.forEach(btn => btn.addEventListener('click', btnClicked))
+
+        let operations = document.querySelectorAll('input[name=operation]'),
+            form = document.querySelector('#form')
+
+        operations.forEach(opt => {
+            opt.addEventListener('change', e => {
+                _opt = document.querySelector('input[name=operation]:checked').value
+                if (_opt == 'add') {
+                    if (!form.classList.contains('add')) {
+                        form.classList.add('add')
+                    }
+                    form.classList.remove('remove')
+                }
+                if (_opt == 'remove') {
+                    if (!form.classList.contains('remove')) {
+                        form.classList.add('remove')
+                    }
+                    form.classList.remove('add')
+                }
+            })
+        })
+
+    })
+
+</script>
+</body>
+</html>

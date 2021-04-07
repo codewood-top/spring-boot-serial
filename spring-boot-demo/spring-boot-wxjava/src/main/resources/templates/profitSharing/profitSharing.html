@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>微信支付分账页</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,minimum-scale=1,user-scalable=no">
+    <link rel="icon" href="http://img1.codewood.top/developer/images/code-logo-large.png">
+    <style>
+        .form-cell + .form-cell {
+            margin-top: 10px;
+        }
+        input {
+            width: 80%;
+        }
+        .btn {
+            width: 100%;
+            font-size: 14px;
+            line-height: 30px;
+            background: #2196f3;
+            border: 1px solid #2196f3;
+            color: #fff;
+            border-radius: 3px;
+        }
+        .btn+.btn {
+            margin-top: 10px;
+        }
+
+    </style>
+</head>
+<body>
+
+<div id="form">
+    <h2>分账</h2>
+    <div class="form-cell">
+        <label>appid</label>
+        <div>
+            <select name="appid">
+                <option th:each="app:${apps}" th:value="${app.appid}" th:text="${app.type + '-' + app.appid}"></option>
+            </select>
+        </div>
+    </div>
+    <div class="form-cell">
+        <label>transactionId</label>
+        <div>
+            <input type="text" id="transactionId" name="transactionId">
+        </div>
+        <div style="margin-top:5px;">
+            <button id="btn_query">查询</button>
+            <span id="unSplitAmount"></span>
+        </div>
+    </div>
+    <div class="form-cell">
+        <label>outTradeNo</label>
+        <div>
+            <input type="text" id="outTradeNo" name="outTradeNo">
+        </div>
+    </div>
+    <div class="form-cell">
+        <label>分账接收方类型</label>
+        <div>
+            <select name="type">
+                <option th:each="type:${receiverTypes}" th:value="${type}" th:text="${type}"></option>
+            </select>
+        </div>
+    </div>
+    <div class="form-cell">
+        <label>account</label>
+        <div>
+            <input type="text" id="account" name="account">
+        </div>
+    </div>
+    <div class="form-cell">
+        <label>name(optional)</label>
+        <div>
+            <input type="text" id="name" name="name">
+        </div>
+    </div>
+    <div class="form-cell">
+        <label>description</label>
+        <div>
+            <input type="text" id="description" name="description">
+        </div>
+    </div>
+    <div class="form-cell">
+        <label>amount</label>
+        <div>
+            <input type="text" id="amount" name="amount">
+        </div>
+    </div>
+    <div class="form-cell">
+        <div>
+            <input type="radio" style="width:auto;"  name="multi" value="false" checked>单次分账
+            <input type="radio" style="width:auto;"  name="multi" value="true">多次分账
+        </div>
+    </div>
+    <div class="form-cell">
+        <button class="btn">请求分账</button>
+    </div>
+</div>
+
+<script src="http://libs.baidu.com/jquery/2.0.0/jquery.min.js"></script>
+<script src="http://res.wx.qq.com/open/js/jweixin-1.6.0.js"></script>
+<script th:inline="javascript">
+
+    let isRefund = false
+
+    function btnClicked(e) {
+        let appid = document.querySelector('select[name=appid]').value,
+            type = document.querySelector('select[name=type]').value,
+            account = document.querySelector('input[name=account]').value,
+            name = document.querySelector('input[name=name]').value,
+            transactionId = document.querySelector('input[name=transactionId]').value,
+            outTradeNo = document.querySelector('input[name=outTradeNo]').value,
+            amount = document.querySelector('input[name=amount]').value,
+            description = document.querySelector('input[name=description]').value,
+            multi = document.querySelector('input[name=multi]:checked').value
+
+        let data = {
+            appid: appid,
+            type: type,
+            account: account,
+            name: name,
+            transactionId: transactionId,
+            tradeNo: outTradeNo,
+            amount: amount,
+            description: description,
+            multi: multi
+        }
+
+        $.ajax({
+            url: '/wx/profitsharing/rest/profitsharing',
+            method: 'post',
+            data: data,
+            success: res => {
+                if (res.code || res.message) {
+                    alert(res.message)
+                }
+            }
+        })
+    }
+
+    $(function() {
+        let btns = document.querySelectorAll('.btn')
+        btns.forEach(btn => btn.addEventListener('click', btnClicked))
+
+        document.querySelector('#btn_query').addEventListener('click', e => {
+            let transactionId = document.querySelector('input[name=transactionId]').value
+                unSplitAmountDom = document.querySelector('#unSplitAmount')
+
+            unSplitAmountDom.innerText = ''
+            $.ajax({
+                url: '/wx/profitsharing/rest/amountquery',
+                method: 'post',
+                data: {
+                    transactionId: transactionId,
+                },
+                success: res => {
+                    if (res.code || res.message) {
+                        alert(res.message)
+                        return
+                    }
+                    unSplitAmountDom.innerText = res.unSplitAmount + '元'
+                }
+            })
+        })
+
+    })
+
+</script>
+</body>
+</html>

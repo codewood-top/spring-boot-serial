@@ -1,0 +1,22 @@
+server:
+  port: 9091
+
+weixin:
+  config:
+    properties:
+      apps:
+        - appid:
+          secret:
+          type: mp
+        - appid:
+          secret:
+          type: miniprogram
+      pay:
+        mchid:
+        key:
+        cert-path:
+        notify-url:
+        refund-notify-url:
+logging:
+  level:
+    top.codewood.wx: debug

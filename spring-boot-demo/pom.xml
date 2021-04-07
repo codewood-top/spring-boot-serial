@@ -20,6 +20,7 @@
         <module>spring-boot-exception</module>
         <module>spring-boot-email</module>
         <module>spring-boot-mail</module>
+        <module>spring-boot-wxjava</module>
     </modules>
 
     <properties>

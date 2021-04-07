@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>微信授权码</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,minimum-scale=1,user-scalable=no">
+    <link rel="icon" href="http://img1.codewood.top/developer/images/code-logo-large.png">
+    <style>
+        .avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+        }
+    </style>
+</head>
+<body>
+
+    <div>
+        <div>
+            <label>appid</label>
+            <div th:text="${appid}"></div>
+        </div>
+        <div>
+            <label>code</label>
+            <div th:text="${code}"></div>
+        </div>
+        <div>
+            <label>scope</label>
+            <div th:text="${scope}"></div>
+        </div>
+
+
+    </div>
+
+<script src="http://libs.baidu.com/jquery/2.0.0/jquery.min.js"></script>
+<script src="http://res.wx.qq.com/open/js/jweixin-1.6.0.js"></script>
+<script th:inline="javascript">
+
+
+</script>
+</body>
+</html>
