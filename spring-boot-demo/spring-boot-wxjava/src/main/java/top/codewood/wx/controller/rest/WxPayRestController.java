@@ -47,7 +47,7 @@ public class WxPayRestController {
     private WxAppProperties wxAppProperties;
 
     @RequestMapping("/unifiedorder")
-    public Map<String, String> unifiedorder(@RequestParam("appid") String appid,
+    public Map<String, String> unifiedOrder(@RequestParam("appid") String appid,
                                             @RequestParam("payType") String payType,
                                             @RequestParam("tradeNo") String tradeNo,
                                             @RequestParam("description") String description,
@@ -87,7 +87,7 @@ public class WxPayRestController {
             map.put("timeStamp", String.valueOf(timeStamp));
             map.put("nonceStr", nonceStr);
 
-            map.put("signType", WxPayConstants.SignType.MD5);
+            map.put("signType", unifiedOrderV2Request.getSignType());
             map.put("package", "prepay_id=" + unifiedOrderV2Result.getPrepayId());
             map.put("paySign", wxPayService.sign(map));
         }

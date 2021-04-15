@@ -12,7 +12,7 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public String generateOrderNumber() {
         StringBuilder sb = new StringBuilder();
-        sb.append(DateTimeFormatter.ofPattern("yyyyMMddHHMM").format(LocalDateTime.now()));
+        sb.append(DateTimeFormatter.ofPattern("yyyyMMddHHmm").format(LocalDateTime.now()));
         for (int i = 0; i < 6; i++) {
             sb.append(Double.valueOf(Math.random() * 10).intValue());
         }
