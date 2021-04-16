@@ -22,6 +22,7 @@
         <module>spring-boot-mail</module>
         <module>spring-boot-wxjava</module>
         <module>spring-boot-schedule</module>
+        <module>spring-boot-elasticsearch</module>
     </modules>
 
     <properties>

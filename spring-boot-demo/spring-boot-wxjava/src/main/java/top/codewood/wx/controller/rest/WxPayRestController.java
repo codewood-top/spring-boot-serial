@@ -1,10 +1,8 @@
 package top.codewood.wx.controller.rest;
 
-import com.google.zxing.WriterException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,10 +20,8 @@ import top.codewood.wx.pay.v2.common.WxPayConstants;
 import top.codewood.wx.service.ProfitSharingService;
 import top.codewood.wx.service.WxPayService;
 import top.codewood.wx.util.Strings;
-import top.codewood.wx.util.qrcode.QRCodeUtils;
 
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
