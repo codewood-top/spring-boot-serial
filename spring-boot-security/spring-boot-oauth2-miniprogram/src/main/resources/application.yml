@@ -1,0 +1,27 @@
+
+spring:
+  datasource:
+    url: jdbc:mysql://xxxx:3306/test_mnp_oauth2?characterEncoding=utf8&useSSL=false&useAffectedRows=true
+    username: xxxxxx
+    password: xxxxxx
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    hikari:
+      idle-timeout: 60000
+      connection-timeout: 60000
+      max-lifetime: 60000
+      maximum-pool-size: 2
+  jpa:
+    database: mysql
+    database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
+    generate-ddl: true
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+
+weixin:
+  config:
+    properties:
+      apps:
+        - appid:
+          secret:
+          type:

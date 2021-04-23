@@ -16,6 +16,7 @@
         <module>spring-boot-web-security-jwt</module>
         <module>spring-boot-oauth2</module>
         <module>spring-boot-oauth2-customer</module>
+        <module>spring-boot-oauth2-miniprogram</module>
     </modules>
 
     <properties>
