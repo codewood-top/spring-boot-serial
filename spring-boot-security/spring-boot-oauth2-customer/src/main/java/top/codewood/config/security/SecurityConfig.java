@@ -50,6 +50,7 @@ import top.codewood.config.security.oauth2.provider.sms.DefaultSmsCodeService;
 import top.codewood.config.security.oauth2.provider.sms.SmsAuthenticationProvider;
 import top.codewood.config.security.oauth2.provider.sms.SmsCodeService;
 import top.codewood.config.security.oauth2.provider.sms.SmsTokenGranter;
+import top.codewood.config.security.userdetails.CustomUserDetails;
 import top.codewood.config.security.userdetails.CustomUserDetailsService;
 
 import javax.servlet.ServletException;
@@ -57,6 +58,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @Configuration
 public class SecurityConfig {
@@ -232,6 +234,8 @@ public class SecurityConfig {
 
     public  class CustomUserDetailsServiceImpl extends CustomUserDetailsService {
 
+        private AtomicInteger USER_COUNTER = new AtomicInteger(0);
+
         @Override
         public UserDetails loadUserByPhone(String phone) {
             return buildUser(phone);
@@ -242,11 +246,12 @@ public class SecurityConfig {
             return buildUser(username);
         }
 
-        private UserDetails buildUser(String username) {
-            return new User(username, passwordEncoder().encode("123456"), Arrays.asList(new SimpleGrantedAuthority("ROLE_USER")));
+        private CustomUserDetails buildUser(String username) {
+            CustomUserDetails user = new CustomUserDetails(Long.valueOf(USER_COUNTER.incrementAndGet()), username, passwordEncoder().encode("123456"), Arrays.asList(new SimpleGrantedAuthority("ROLE_USER")));
+            return user;
         }
-
     }
+
 
     @Bean
     public TokenStore tokenStore() {
@@ -267,7 +272,8 @@ public class SecurityConfig {
             @Override
             public OAuth2AccessToken enhance(OAuth2AccessToken accessToken, OAuth2Authentication authentication) {
                 final Map<String, Object> additionalInfo = new HashMap<>();
-                additionalInfo.put("user_id", 1L);
+                Long userId = ((CustomUserDetails)authentication.getPrincipal()).getUserId();
+                additionalInfo.put("user_id", userId);
                 ((DefaultOAuth2AccessToken)accessToken).setAdditionalInformation(additionalInfo);
                 return accessToken;
             }
