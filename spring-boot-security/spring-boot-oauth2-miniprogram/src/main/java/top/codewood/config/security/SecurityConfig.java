@@ -82,8 +82,8 @@ public class SecurityConfig {
                     .secret(passwordEncoder().encode("first-secret"))
                     .scopes("all")
                     .authorizedGrantTypes("refresh_token", WxMnpTokenGranter.GRANT_TYPE)
-                    .accessTokenValiditySeconds(3 * 60)
-                    .refreshTokenValiditySeconds(60 * 10);
+                    .accessTokenValiditySeconds(20)
+                    .refreshTokenValiditySeconds(60 * 1);
         }
 
         @Override
@@ -98,9 +98,15 @@ public class SecurityConfig {
                 @Override
                 public ResponseEntity<OAuth2Exception> translate(Exception e) throws Exception {
                     LOGGER.error("endpoint err: {}", e.getMessage());
-                    AppOAuth2Exception appOAuth2Exception = new AppOAuth2Exception(e.getMessage());
+                    AppOAuth2Exception appOAuth2Exception = null;
                     if (e instanceof UsernameNotFoundException) {
+                        appOAuth2Exception = new AppOAuth2Exception("用户不存在");
                         appOAuth2Exception.setCode(401404);
+                    } else if(e.getMessage().startsWith("Invalid refresh token")) {
+                        appOAuth2Exception = new AppOAuth2Exception("invalid token");
+                        appOAuth2Exception.setCode(401400);
+                    } else {
+                        appOAuth2Exception = new AppOAuth2Exception(e.getMessage());
                     }
                     return ResponseEntity.status(HttpServletResponse.SC_UNAUTHORIZED).body(appOAuth2Exception);
                 }
@@ -223,6 +229,7 @@ public class SecurityConfig {
                         if (authException.getCause() instanceof InvalidTokenException) {
                             if (authException.getMessage().startsWith("Access token expired")) {
                                 LOGGER.error("token expired.");
+                                map.put("code", 401405);
                                 map.put("message", "token已失效");
                             } else {
                                 LOGGER.error("invalid token, err: {}", authException.getMessage());
@@ -234,7 +241,7 @@ public class SecurityConfig {
                         }
                     }
                     response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
-                    response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+                    response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                     response.getWriter().write(objectMapper.writeValueAsString(map));
                     response.flushBuffer();
                 }

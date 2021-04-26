@@ -11,6 +11,11 @@ public class UserVO implements Serializable {
     private String nickname;
     private String avatar;
     private boolean authorized;
+    private Long timestamp;
+
+    {
+        timestamp = System.currentTimeMillis();
+    }
 
     public UserVO() {}
 
@@ -60,5 +65,13 @@ public class UserVO implements Serializable {
 
     public void setAuthorized(boolean authorized) {
         this.authorized = authorized;
+    }
+
+    public Long getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(Long timestamp) {
+        this.timestamp = timestamp;
     }
 }
