@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>hello-spring-boot-web-security</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,minimum-scale=1,user-scalable=no">
+    <style>
+        .qrcode-wrap {
+            text-align: center;
+            display: inline-block;
+            position: relative;
+        }
+        .qrcode-wrap {
+            width: 190px;
+            height: 190px;
+        }
+        .qrcode-wrap .alt, .page-msg {
+            position: absolute;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            color: #fff;
+            cursor: pointer;
+        }
+        .qrcode-wrap .alt.invalid .txt {
+            position: absolute;
+            top: 50%;
+            right: 0;
+            left: 0;
+            text-align: center;
+            font-size: 14px;
+            margin-top: -7px;
+            z-index: 1;
+        }
+        .qrcode-wrap .alt.invalid .mask {
+            position: absolute;
+            top: 0;
+            right: 0;
+            left: 0;
+            bottom: 0;
+            opacity: .7;
+            background: #000;
+        }
+        .hide {
+            display: none;
+        }
+        .page-msg .msg {
+            position: absolute;
+            top: 50%;
+            right: 0;
+            left: 0;
+            transform: translateY(-50%);
+        }
+        .page-msg .msg {
+            color: #333;
+            font-size: 13px;
+        }
+        .page-msg .tip {
+            color: #8d8d8d;
+       }
+    </style>
+</head>
+<body>
+    <h1>hello-spring-boot-web-security</h1>
+
+    <div class="qrcode-wrap">
+        <div id="qrcode" class="" onclick="getCode()"></div>
+        <div class="alt invalid hide" onclick="getCode()">
+            <div class="txt">二维码已失效，点击刷新</div>
+            <div class="mask"></div>
+        </div>
+        <div class="page-msg hide">
+            <div class="msg">
+                <h4>扫码成功，请在手机端完成操作</h4>
+                <div class="tip">请勿刷新页面</div>
+            </div>
+        </div>
+    </div>
+
+    <div>
+        <a href="/user">跳转到个人中心</a>
+    </div>
+
+
+    <script th:src="@{/js/jquery-2.1.3.min.js}"></script>
+    <script th:src="@{/js/qrcode.min.js}"></script>
+    <script th:inline="javascript">
+
+        let qrcode = new QRCode("qrcode", {width:190, height:190})
+        let code, interval
+
+        function getCode() {
+            $.get('/oauth/rest/code_url', res => {
+                code = res.code
+                qrcode.makeCode(res.codeUrl)
+
+                interval = setInterval(getCodeState, 1000)
+                resetState()
+            })
+        }
+
+
+        function getCodeState() {
+            $.post('/oauth/rest/get_code_state',{code: code}, res => {
+                if (res.status == -1) {
+                    invalidState()
+                    clearInterval(interval)
+                } else if (res.status == 2) {
+                    scannedState()
+                } else if (res.status == 1) {
+                    $.post('/login/oauth_code', {code: code}, res => {
+                        if (res.message == 'ok') {
+                           window.location.href = '/user'
+                        }
+                    })
+                    clearInterval(interval)
+                }
+            })
+        }
+
+        function resetState() {
+            document.querySelector('#qrcode').classList.remove('hide')
+            document.querySelector('.alt.invalid').classList.add('hide')
+            document.querySelector('.page-msg').classList.add('hide')
+        }
+
+        function invalidState() {
+            document.querySelector('#qrcode').classList.remove('hide')
+            document.querySelector('.alt.invalid').classList.remove('hide')
+            document.querySelector('.page-msg').classList.add('hide')
+        }
+
+        function scannedState() {
+            document.querySelector('#qrcode').classList.add('hide')
+            document.querySelector('.alt.invalid').classList.add('hide')
+            document.querySelector('.page-msg').classList.remove('hide')
+        }
+
+        $(function(){
+            getCode()
+        })
+
+
+    </script>
+</body>
+</html>

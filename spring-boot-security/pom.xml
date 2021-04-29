@@ -17,6 +17,7 @@
         <module>spring-boot-oauth2</module>
         <module>spring-boot-oauth2-customer</module>
         <module>spring-boot-oauth2-miniprogram</module>
+        <module>spring-boot-web-qrcode</module>
     </modules>
 
     <properties>
