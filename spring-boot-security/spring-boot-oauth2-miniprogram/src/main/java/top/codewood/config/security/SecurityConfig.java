@@ -34,6 +34,7 @@ import org.springframework.security.oauth2.config.annotation.web.configurers.Res
 import org.springframework.security.oauth2.provider.CompositeTokenGranter;
 import org.springframework.security.oauth2.provider.TokenGranter;
 import org.springframework.security.oauth2.provider.error.WebResponseExceptionTranslator;
+import org.springframework.security.oauth2.provider.password.ResourceOwnerPasswordTokenGranter;
 import org.springframework.security.oauth2.provider.refresh.RefreshTokenGranter;
 import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenConverter;
@@ -81,7 +82,7 @@ public class SecurityConfig {
                     .withClient("first-client")
                     .secret(passwordEncoder().encode("first-secret"))
                     .scopes("all")
-                    .authorizedGrantTypes("refresh_token", WxMnpTokenGranter.GRANT_TYPE)
+                    .authorizedGrantTypes("password", "refresh_token", WxMnpTokenGranter.GRANT_TYPE)
                     .accessTokenValiditySeconds(20)
                     .refreshTokenValiditySeconds(60 * 1);
         }
@@ -138,6 +139,14 @@ public class SecurityConfig {
 
     private void setTokenGranters(AuthorizationServerEndpointsConfigurer endpoints) {
         List<TokenGranter> tokenGranters = new ArrayList<>();
+
+        // password
+        tokenGranters.add(new ResourceOwnerPasswordTokenGranter(
+                authenticationManager(),
+                endpoints.getTokenServices(),
+                endpoints.getClientDetailsService(),
+                endpoints.getOAuth2RequestFactory()
+        ));
 
         // refresh_token
         tokenGranters.add(new RefreshTokenGranter(
