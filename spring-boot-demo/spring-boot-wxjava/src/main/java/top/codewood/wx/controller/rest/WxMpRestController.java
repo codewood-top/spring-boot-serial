@@ -17,19 +17,21 @@ import top.codewood.wx.service.WxMpService;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
-import java.time.LocalDateTime;
 import java.util.Arrays;
 
 @RestController
 @RequestMapping("/wx/mp/rest")
 public class WxMpRestController {
 
-    static final Logger LOGGER = LoggerFactory.getLogger(WxMpRestController.class);
+    final Logger logger = LoggerFactory.getLogger(WxMpRestController.class);
 
     private static final String WX_MP_TOKEN = "codewoodtoken";
 
-    @Autowired
     private WxMpService wxMpService;
+
+    public WxMpRestController(WxMpService wxMpService) {
+        this.wxMpService = wxMpService;
+    }
 
     @RequestMapping("/access_token")
     public String accessToken() {
@@ -51,7 +53,7 @@ public class WxMpRestController {
                 timestamp = request.getParameter("timestamp"),
                 nonce = request.getParameter("nonce");
             if (!signature.equals(generateSignature(timestamp, nonce, WX_MP_TOKEN))) {
-                LOGGER.debug("check signature failure, signature: {}, timestamp: {}, nonce: {}", signature, timestamp, nonce);
+                logger.debug("check signature failure, signature: {}, timestamp: {}, nonce: {}", signature, timestamp, nonce);
                 return WxConstants.FAILURE;
             }
             return echoStr;
@@ -115,7 +117,7 @@ public class WxMpRestController {
                 }
 
             } catch (IOException e) {
-                LOGGER.error("err: {}", e.getMessage());
+                logger.error("err: {}", e.getMessage());
             }
         }
         return WxConstants.SUCCESS.toLowerCase();

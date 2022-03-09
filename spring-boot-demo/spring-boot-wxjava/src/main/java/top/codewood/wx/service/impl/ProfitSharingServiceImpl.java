@@ -1,6 +1,5 @@
 package top.codewood.wx.service.impl;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import top.codewood.wx.config.property.WxAppProperties;
 import top.codewood.wx.pay.v2.api.ProfitSharingV2Service;
@@ -14,8 +13,10 @@ public class ProfitSharingServiceImpl implements ProfitSharingService {
 
     private ProfitSharingV2Service profitSharingV2Service;
 
-    @Autowired
     private WxAppProperties wxAppProperties;
+    public ProfitSharingServiceImpl(WxAppProperties wxAppProperties) {
+        this.wxAppProperties = wxAppProperties;
+    }
 
     public ProfitSharingReceiverV2Result addReceiver(ProfitSharingReceiverV2Request receiverV2Request) {
         return profitSharingV2Service.addReceiver(receiverV2Request);

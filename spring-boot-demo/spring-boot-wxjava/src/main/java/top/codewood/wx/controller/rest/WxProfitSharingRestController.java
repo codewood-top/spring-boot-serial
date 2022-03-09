@@ -2,7 +2,6 @@ package top.codewood.wx.controller.rest;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -24,13 +23,15 @@ import java.util.Map;
 @RequestMapping("/wx/profitsharing/rest")
 public class WxProfitSharingRestController {
 
-    static final Logger LOGGER = LoggerFactory.getLogger(WxProfitSharingRestController.class);
+    final Logger logger = LoggerFactory.getLogger(WxProfitSharingRestController.class);
 
-    @Autowired
     private WxAppProperties wxAppProperties;
-
-    @Autowired
     private ProfitSharingService profitSharingService;
+
+    public WxProfitSharingRestController(WxAppProperties wxAppProperties, ProfitSharingService profitSharingService) {
+        this.wxAppProperties = wxAppProperties;
+        this.profitSharingService = profitSharingService;
+    }
 
     @RequestMapping("/addreceiver")
     public String addReceiver(@RequestParam("appid") String appid,
@@ -48,7 +49,7 @@ public class WxProfitSharingRestController {
                 .receiver(WxGsonBaseBuilder.create().toJson(receiver))
                 .build();
         ProfitSharingReceiverV2Result receiverV2Result = profitSharingService.addReceiver(receiverV2Request);
-        LOGGER.debug("receiver result: {}", receiverV2Result);
+        logger.debug("receiver result: {}", receiverV2Result);
         return WxConstants.SUCCESS;
     }
 
@@ -64,7 +65,7 @@ public class WxProfitSharingRestController {
                 .receiver(WxGsonBaseBuilder.create().toJson(receiver))
                 .build();
         ProfitSharingReceiverV2Result receiverV2Result = profitSharingService.removeReceiver(receiverV2Request);
-        LOGGER.debug("receiver result: {}", receiverV2Result);
+        logger.debug("receiver result: {}", receiverV2Result);
         return WxConstants.SUCCESS;
     }
 
@@ -96,7 +97,7 @@ public class WxProfitSharingRestController {
                 .receivers(WxGsonBaseBuilder.create().toJson(Arrays.asList(receiver)))
                 .build();
         ProfitSharingV2Result profitSharingV2Result = profitSharingService.profitSharing(profitSharingV2Request, multi);
-        LOGGER.debug("profit sharing result: {}", profitSharingV2Result);
+        logger.debug("profit sharing result: {}", profitSharingV2Result);
         return WxConstants.SUCCESS;
     }
 

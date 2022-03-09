@@ -29,13 +29,13 @@ public class OAuthCodeAuthenticationFilter extends AbstractAuthenticationProcess
                     "Authentication method not supported: " + request.getMethod());
         }
 
-        String code = obtainOpenid(request);
+        String code = obtainCode(request);
         OAuthCodeAuthenticationToken token = new OAuthCodeAuthenticationToken(code, null);
         token.setDetails(authenticationDetailsSource.buildDetails(request));
         return this.getAuthenticationManager().authenticate(token);
     }
 
-    protected String obtainOpenid(HttpServletRequest request) {
+    protected String obtainCode(HttpServletRequest request) {
         return request.getParameter(codeParameter);
     }
 
