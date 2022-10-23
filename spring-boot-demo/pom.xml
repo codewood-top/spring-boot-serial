@@ -18,11 +18,11 @@
         <module>spring-boot-dubbo</module>
         <module>spring-boot-jedis</module>
         <module>spring-boot-exception</module>
-        <module>spring-boot-email</module>
         <module>spring-boot-mail</module>
         <module>spring-boot-wxjava</module>
         <module>spring-boot-schedule</module>
         <module>spring-boot-elasticsearch</module>
+        <module>spring-boot-mybatis</module>
     </modules>
 
     <properties>
