@@ -17,12 +17,14 @@ import java.util.Map;
 @Service("wxPayService")
 public class WxPayServiceImpl implements WxPayService {
 
-    static Logger LOGGER = LoggerFactory.getLogger(WxPayServiceImpl.class);
+    static Logger logger = LoggerFactory.getLogger(WxPayServiceImpl.class);
 
     private WxPayV2Service wxPayV2Service;
 
-    @Autowired
     private WxAppProperties wxAppProperties;
+    public WxPayServiceImpl(WxAppProperties wxAppProperties) {
+        this.wxAppProperties = wxAppProperties;
+    }
 
     @Override
     public String sign(Object object) {

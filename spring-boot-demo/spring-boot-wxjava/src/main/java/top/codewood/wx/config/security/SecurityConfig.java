@@ -2,7 +2,6 @@ package top.codewood.wx.config.security;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.ResponseEntity;
@@ -37,7 +36,7 @@ import top.codewood.wx.config.security.oauth2.provider.mnp.WxMnpTokenGranter;
 import top.codewood.wx.config.security.oauth2.provider.mp.WxMpAuthenticationProvider;
 import top.codewood.wx.config.security.oauth2.provider.mp.WxMpTokenGranter;
 import top.codewood.wx.config.security.userdetails.CustomUserDetailsService;
-import top.codewood.wx.mnp.bean.result.WxMnpCode2SessionResult;
+import top.codewood.wx.mnp.bean.auth.WxMnpCode2SessionResult;
 import top.codewood.wx.mp.bean.oauth2.WxOAuth2UserInfo;
 
 import javax.servlet.http.HttpServletResponse;
@@ -48,10 +47,13 @@ import java.util.List;
 @Configuration
 public class SecurityConfig {
 
-    static final Logger LOGGER = LoggerFactory.getLogger(SecurityConfig.class);
+    final Logger logger = LoggerFactory.getLogger(SecurityConfig.class);
 
-    @Autowired
     private WxAppProperties wxAppProperties;
+
+    public SecurityConfig(WxAppProperties wxAppProperties) {
+        this.wxAppProperties = wxAppProperties;
+    }
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -88,7 +90,7 @@ public class SecurityConfig {
             endpoints.exceptionTranslator(new WebResponseExceptionTranslator<OAuth2Exception>() {
                 @Override
                 public ResponseEntity<OAuth2Exception> translate(Exception e) throws Exception {
-                    LOGGER.error("endpoint err: {}", e.getMessage());
+                    logger.error("endpoint err: {}", e.getMessage());
                     return ResponseEntity.status(HttpServletResponse.SC_UNAUTHORIZED).body(new OAuth2Exception(e.getMessage()));
                 }
             });

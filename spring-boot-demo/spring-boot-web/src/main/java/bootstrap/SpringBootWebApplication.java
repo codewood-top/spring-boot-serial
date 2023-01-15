@@ -11,10 +11,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
-@SpringBootApplication
+@SpringBootApplication(scanBasePackages = "top.codewood")
 public class SpringBootWebApplication {
 
-    static final Logger LOGGER = LoggerFactory.getLogger(SpringBootApplication.class);
+    public static final String DOMAIN = "http://127.0.0.1:8080";
+    public static final String UPLOAD_PATH = "F:/Users/zero/Documents/tmp/upload";
+
+    final Logger logger = LoggerFactory.getLogger(SpringBootApplication.class);
 
     public static void main(String[] args) {
         SpringApplication.run(SpringBootWebApplication.class, args);
@@ -22,20 +25,20 @@ public class SpringBootWebApplication {
 
     @GetMapping("/index")
     public String index() {
-        LOGGER.info("visiting page index");
+        logger.info("visiting page index");
         return "index.html";
     }
 
     @GetMapping("/hello")
     public String hello(Model model) {
-        LOGGER.info("通过/hello访问hello.html");
+        logger.info("通过/hello访问hello.html");
         return "hello.html";
     }
 
     @ResponseBody
     @RequestMapping("/rest/hello")
     public String helloRest() {
-        LOGGER.info("visiting rest api hello");
+        logger.info("visiting rest api hello");
         return "Hello, spring-boot-serial.";
     }
 

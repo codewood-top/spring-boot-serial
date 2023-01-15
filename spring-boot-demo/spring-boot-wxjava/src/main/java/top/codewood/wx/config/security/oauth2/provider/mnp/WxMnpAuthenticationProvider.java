@@ -13,8 +13,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import top.codewood.wx.config.property.WxAppProperties;
 import top.codewood.wx.config.property.WxAppProperty;
 import top.codewood.wx.config.security.userdetails.CustomUserDetailsService;
-import top.codewood.wx.mnp.api.WxMnpApi;
-import top.codewood.wx.mnp.bean.result.WxMnpCode2SessionResult;
+import top.codewood.wx.mnp.api.WxMnpAuthApi;
+import top.codewood.wx.mnp.bean.auth.WxMnpCode2SessionResult;
 
 public class WxMnpAuthenticationProvider implements AuthenticationProvider, MessageSourceAware {
 
@@ -43,7 +43,7 @@ public class WxMnpAuthenticationProvider implements AuthenticationProvider, Mess
         WxAppProperty wxAppProperty = wxAppProperties.getAppProperty(appid);
         if (wxAppProperty == null) throw new AuthenticationServiceException("未配置，appid: " + appid);
 
-        WxMnpCode2SessionResult code2SessionResult = WxMnpApi.getInstance().code2Session(wxAppProperty.getAppid(), wxAppProperty.getSecret(), code);
+        WxMnpCode2SessionResult code2SessionResult = WxMnpAuthApi.getInstance().code2Session(wxAppProperty.getAppid(), wxAppProperty.getSecret(), code);
 
         LOGGER.debug("code2 session result: {}", code2SessionResult);
 

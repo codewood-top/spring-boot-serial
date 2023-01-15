@@ -28,8 +28,11 @@ public class WxMpServiceImpl implements WxMpService {
     private WxAccessToken2 wxAccessToken = null;
     private WxJsapiTicket2 wxJsapiTicket = null;
 
-    @Autowired
     private WxAppProperties wxAppProperties;
+
+    public WxMpServiceImpl(WxAppProperties wxAppProperties) {
+        this.wxAppProperties = wxAppProperties;
+    }
 
     @Override
     public String getAccessToken() {

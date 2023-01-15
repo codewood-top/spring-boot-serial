@@ -23,6 +23,10 @@
         <module>spring-boot-schedule</module>
         <module>spring-boot-elasticsearch</module>
         <module>spring-boot-mybatis</module>
+        <module>spring-boot-shiro</module>
+        <module>spring-boot-event</module>
+        <module>spring-boot-validation</module>
+        <module>spring-boot-websocket</module>
     </modules>
 
     <properties>

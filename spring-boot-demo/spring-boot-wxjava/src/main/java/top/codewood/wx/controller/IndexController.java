@@ -10,12 +10,12 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @Controller
 public class IndexController {
 
-    static Logger LOGGER = LoggerFactory.getLogger(IndexController.class);
+    static Logger logger = LoggerFactory.getLogger(IndexController.class);
 
     @ResponseBody
     @RequestMapping("/MP_verify_{code}.txt")
     public String wxMpTxtVerify(@PathVariable("code") String code) {
-        LOGGER.debug("code: {}", code);
+        logger.debug("code: {}", code);
         return code;
     }
 

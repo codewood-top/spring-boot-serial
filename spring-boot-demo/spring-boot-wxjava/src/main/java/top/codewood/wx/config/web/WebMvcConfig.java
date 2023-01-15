@@ -20,17 +20,19 @@ import java.net.URL;
 @Profile("local")
 public class WebMvcConfig implements WebMvcConfigurer {
 
-    static final Logger LOGGER = LoggerFactory.getLogger(WebMvcConfig.class);
+    final Logger logger = LoggerFactory.getLogger(WebMvcConfig.class);
 
-    @Autowired
     private ApplicationContext applicationContext;
-
-    @Autowired
     private SpringTemplateEngine springTemplateEngine;
+
+    public WebMvcConfig(ApplicationContext applicationContext, SpringTemplateEngine springTemplateEngine) {
+        this.applicationContext = applicationContext;
+        this.springTemplateEngine = springTemplateEngine;
+    }
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        LOGGER.debug("start update static path");
+        logger.debug("start update static path");
         String path = WebMvcConfig.class.getClassLoader().getResource("").getPath();
         path = path.replaceAll("/target/classes/", "/src/main/resources/static/");
         String cssPath = "file:" + path + "css/";

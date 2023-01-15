@@ -31,16 +31,17 @@ import java.util.Map;
 @RequestMapping("/wx/pay/rest")
 public class WxPayRestController {
 
-    static Logger LOGGER = LoggerFactory.getLogger(WxPayRestController.class);
+    static Logger logger = LoggerFactory.getLogger(WxPayRestController.class);
 
-    @Autowired
     private WxPayService wxPayService;
-
-    @Autowired
     private ProfitSharingService profitSharingService;
-
-    @Autowired
     private WxAppProperties wxAppProperties;
+
+    public WxPayRestController(WxPayService wxPayService, ProfitSharingService profitSharingService, WxAppProperties wxAppProperties) {
+        this.wxPayService = wxPayService;
+        this.profitSharingService = profitSharingService;
+        this.wxAppProperties = wxAppProperties;
+    }
 
     @RequestMapping("/unifiedorder")
     public Map<String, String> unifiedOrder(@RequestParam("appid") String appid,
@@ -95,12 +96,12 @@ public class WxPayRestController {
     @RequestMapping("/notify")
     public String notify(@RequestBody String notifyBody) {
         try {
-            LOGGER.debug("notify body: {}", notifyBody);
+            logger.debug("notify body: {}", notifyBody);
             wxPayService.checkResultSign(notifyBody);
             WxPayV2Notify wxPayNotify = XStreamConverter.fromXml(WxPayV2Notify.class, notifyBody);
-            LOGGER.debug("wxPayNotify: {}", wxPayNotify);
+            logger.debug("wxPayNotify: {}", wxPayNotify);
         } catch (Exception e) {
-            LOGGER.info("微信支付 - 通知结果：{}", notifyBody);
+            logger.info("微信支付 - 通知结果：{}", notifyBody);
             e.printStackTrace();
         }
         return notifyCallbackStr(WxConstants.SUCCESS.toUpperCase(), "成功");
@@ -136,7 +137,7 @@ public class WxPayRestController {
                 .outTradeNo(outTradeNo)
                 .build();
         WxPayOrderCloseV2Result orderCloseV2Result = wxPayService.closeOrder(orderCloseV2Request);
-        LOGGER.debug("order close result: {}", orderCloseV2Result);
+        logger.debug("order close result: {}", orderCloseV2Result);
         return WxConstants.SUCCESS;
     }
 
@@ -164,7 +165,7 @@ public class WxPayRestController {
                 .build();
 
         WxPayRefundV2Result refundV2Result = wxPayService.refund(refundV2Request);
-        LOGGER.debug("refund result: {}", refundV2Result);
+        logger.debug("refund result: {}", refundV2Result);
 
         return WxConstants.SUCCESS;
     }
@@ -172,14 +173,14 @@ public class WxPayRestController {
     @RequestMapping("/refundnotify")
     public String refundNotify(@RequestBody String notifyBody) {
         try {
-            LOGGER.debug("refund notify body: {}", notifyBody);
+            logger.debug("refund notify body: {}", notifyBody);
             Map<String, Object> resultMap = XmlUtils.xml2Map(notifyBody);
             String reqInfo = (String) resultMap.get("req_info");
             String decryptedStr = wxPayService.decrypt(reqInfo);
             WxPayRefundNotifyV2Result refundNotifyV2Result = XStreamConverter.fromXml(WxPayRefundNotifyV2Result.class, decryptedStr);
-            LOGGER.debug("refund notify result: {} ", refundNotifyV2Result);
+            logger.debug("refund notify result: {} ", refundNotifyV2Result);
         } catch (Exception e) {
-            LOGGER.info("微信退款 - 通知结果：{}", notifyBody);
+            logger.info("微信退款 - 通知结果：{}", notifyBody);
             e.printStackTrace();
         }
         return notifyCallbackStr(WxConstants.SUCCESS.toUpperCase(), "成功");

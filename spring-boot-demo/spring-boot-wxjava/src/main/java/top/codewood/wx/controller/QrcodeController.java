@@ -13,10 +13,9 @@ import javax.servlet.http.HttpServletResponse;
 @RequestMapping("/qrcode")
 public class QrcodeController {
 
-    static final Logger LOGGER = LoggerFactory.getLogger(QrcodeController.class);
+    final Logger logger = LoggerFactory.getLogger(QrcodeController.class);
 
     static final String LOGO = "http://img1.codewood.top/developer/images/code-logo-large.png";
-
 
     @RequestMapping("/create")
     public void create(@RequestParam("content") String content, HttpServletResponse response) {
@@ -25,7 +24,7 @@ public class QrcodeController {
                     response.getOutputStream());
             response.flushBuffer();
         } catch (Exception e) {
-            LOGGER.error("wx native pay err, ", e);
+            logger.error("wx native pay err, ", e);
             throw new RuntimeException(e.getMessage());
         }
     }

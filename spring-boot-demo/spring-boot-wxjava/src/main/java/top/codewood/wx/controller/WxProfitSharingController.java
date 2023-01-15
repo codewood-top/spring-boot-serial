@@ -1,6 +1,5 @@
 package top.codewood.wx.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,11 +12,13 @@ import top.codewood.wx.service.ProfitSharingService;
 @RequestMapping("/wx/profitsharing")
 public class WxProfitSharingController {
 
-    @Autowired
     private WxAppProperties wxAppProperties;
-
-    @Autowired
     private ProfitSharingService profitSharingService;
+
+    public WxProfitSharingController(WxAppProperties wxAppProperties, ProfitSharingService profitSharingService) {
+        this.wxAppProperties = wxAppProperties;
+        this.profitSharingService = profitSharingService;
+    }
 
     @GetMapping("/receiver")
     public String receiver(Model model) {
