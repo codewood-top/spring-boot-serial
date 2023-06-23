@@ -1,0 +1,4 @@
+#logging:
+#  level:
+#    top.codewood: debug
+#  file: D:\Projects\zero\spring-boot-serial\logging.log

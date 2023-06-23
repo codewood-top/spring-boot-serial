@@ -27,6 +27,7 @@
         <module>spring-boot-event</module>
         <module>spring-boot-validation</module>
         <module>spring-boot-websocket</module>
+        <module>spring-boot-logging</module>
     </modules>
 
     <properties>
