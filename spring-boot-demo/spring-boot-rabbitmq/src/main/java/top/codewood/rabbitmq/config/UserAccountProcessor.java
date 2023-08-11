@@ -1,4 +1,4 @@
-package top.codewood.config.rabbitmq;
+package top.codewood.rabbitmq.config;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -9,16 +9,16 @@ import org.springframework.amqp.rabbit.annotation.Queue;
 import org.springframework.amqp.rabbit.annotation.QueueBinding;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Component;
-import top.codewood.config.rabbitmq.bean.OrderTopic;
+import top.codewood.rabbitmq.config.bean.UserAccountTopic;
 
 @Component
-public class OrderProcessor {
+public class UserAccountProcessor {
 
-    static final Logger LOGGER = LoggerFactory.getLogger(OrderProcessor.class);
+    static final Logger LOGGER = LoggerFactory.getLogger(UserAccountProcessor.class);
 
     @RabbitListener(bindings = @QueueBinding(
-            value = @Queue(value = OrderTopic.NAME, durable = "true"),
-            exchange = @Exchange(value = OrderTopic.NAME, type = ExchangeTypes.TOPIC),
+            value = @Queue(value = UserAccountTopic.NAME, durable = "true"),
+            exchange = @Exchange(value = UserAccountTopic.NAME, type = ExchangeTypes.TOPIC),
             key = "#"
 
     ))
@@ -27,6 +27,5 @@ public class OrderProcessor {
                 msg = new String(message.getBody());
         LOGGER.debug("routingKey: {}, msg: {}", routingKey, msg);
     }
-
 
 }

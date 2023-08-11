@@ -1,4 +1,4 @@
-package top.codewood.config.rabbitmq.bean;
+package top.codewood.rabbitmq.config.bean;
 
 public interface UserAccountTopic {
 
