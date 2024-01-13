@@ -25,7 +25,12 @@ public class OrderProcessor {
     public void process(Message message) {
         String routingKey = message.getMessageProperties().getReceivedRoutingKey(),
                 msg = new String(message.getBody());
-        LOGGER.debug("routingKey: {}, msg: {}", routingKey, msg);
+
+        int times = message.getMessageProperties().getHeader("times");
+
+        LOGGER.debug("routingKey: {}, msg: {}, times: {}", routingKey, msg, times);
+
+
     }
 
 

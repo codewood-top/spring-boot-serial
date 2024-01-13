@@ -18,6 +18,17 @@ public class RabbitService {
         rabbitTemplate.convertAndSend(exchange, routingKey, data);
     }
 
+    public void send(String exchange, String routingKey, String data, Map<String, Object> headers) {
+        rabbitTemplate.convertAndSend(exchange, routingKey, data, message -> {
+            if (headers != null) {
+                for (Map.Entry<String, Object> entry : headers.entrySet()) {
+                    message.getMessageProperties().setHeader(entry.getKey(), entry.getValue());
+                }
+            }
+            return message;
+        });
+    }
+
     public void sendDelay(String exchange, String routingKey, String data, int delaySeconds) {
         sendDelay(exchange, routingKey, data, delaySeconds, null);
     }

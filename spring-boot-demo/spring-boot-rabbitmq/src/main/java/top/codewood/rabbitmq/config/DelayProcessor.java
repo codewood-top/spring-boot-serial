@@ -8,6 +8,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import top.codewood.rabbitmq.service.RabbitService;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -59,6 +60,7 @@ public class DelayProcessor {
                 resend(msgBody, times + 1);
             } else {
                 status = "done";
+                rabbitService.send("order", "order.delay", msgBody, Collections.singletonMap("times", times));
             }
             logger.info("routingKey: {}, msgBody: {}, times: {}, status: {}", routingKey, msgBody, times, status);
 
