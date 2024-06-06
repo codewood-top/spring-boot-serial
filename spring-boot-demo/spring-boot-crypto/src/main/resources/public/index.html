@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <title>hello-spring-boot-web</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,minimum-scale=1,user-scalable=no">
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body>
+
+<div class="p-4">
+    <div>
+        <div class="w-24">密钥</div>
+        <textarea class="border mt-2 w-full" id="secret"></textarea>
+    </div>
+    <div class="mt-2">
+        <div>解密内容</div>
+        <textarea class="border mt-2 w-full" id="encrypted"></textarea>
+    </div>
+    <div class="mt-2">
+        <div>解密结果</div>
+        <textarea class="border mt-2 w-full" id="result"></textarea>
+    </div>
+    <div class="mt-6">
+        <button class="w-full bg-green-500 rounded-md py-2 shadow-md" id="btn_decrypt">解密</button>
+    </div>
+</div>
+
+<!-- https://github.com/brix/crypto-js#usage-without-requirejs -->
+<script src="//unpkg.com/crypto-js/crypto-js.js"></script>
+<script src="/js/index.js"></script>
+<script >
+    //let secret = "DKFLSJHERLUYlsldflewrDRER34523L"
+    //let data = [{id: 1}, {id: 2}]
+
+    // Encrypt
+    //let ciphertext = CryptoJS.AES.encrypt(JSON.stringify(data), secret).toString();
+    //console.log('cipherText', ciphertext)
+
+    // Decrypt
+    //let bytes  = CryptoJS.AES.decrypt(ciphertext, secret);
+    //let decryptedData = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
+
+    //console.log(decryptedData); // [{id: 1}, {id: 2}]
+
+
+
+    document.querySelector('#btn_decrypt').addEventListener('click', e => {
+        let secret = document.querySelector('#secret').value
+        let ciphertext = document.querySelector('#encrypted').value
+        let bytes  = CryptoJS.AES.decrypt(ciphertext, secret);
+        let decryptedStr = bytes.toString(CryptoJS.enc.Utf8)
+        if (decryptedStr == '') {
+            document.querySelector('#result').value = '解密失败'
+        } else {
+            let decryptedData = JSON.parse(decryptedStr);
+            document.querySelector('#result').value = decryptedData
+        }
+        console.log(secret, ciphertext, decryptedStr)
+
+    })
+
+</script>
+</body>
+</html>

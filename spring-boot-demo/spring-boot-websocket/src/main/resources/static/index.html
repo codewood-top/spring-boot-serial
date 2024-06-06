@@ -17,7 +17,25 @@
 
 <script type="text/javascript">
 
+    function debounceFn() {
+        let timer = null
+        return function(fn, wait = 50) {
+            if (timer) {
+                clearTimeout(timer)
+            }
+
+            timer = setTimeout(() => {
+                fn()
+                console.log('exe debounce fn')
+            }, wait)
+        }
+
+    }
+
     let websocket = null;
+    let debounce = debounceFn()
+
+    let count = 0
 
     if ('WebSocket' in window) {
         websocket = new WebSocket("ws://localhost:8080/socket/one")
@@ -34,7 +52,16 @@
     }
 
     websocket.onmessage = function(event) {
-        setMsgInHtml(event.data)
+
+        const resp = JSON.parse(event.data)
+        if (resp.type == 'connected') {
+            debounce(() => setMsgInHtml('session.id: ' + resp.sessionId))
+        } else if (resp.type == 'message') {
+            setMsgInHtml(resp.message)
+        } else if (resp.type == 'count') {
+            count++
+            debounce(() => setMsgInHtml('count: ' + count))
+        }
     }
 
     websocket.onclose = function() {
